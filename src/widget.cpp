@@ -300,9 +300,9 @@ void Widget::paintGL()
         QMatrix4x4 orientationMatrix;
         QMatrix4x4 viewMatrix;
         if (Bino::instance()->assumeSurroundMode() != Surround_Off) {
-            float verticalVieldOfView = qDegreesToRadians(_verticalFieldOfView);
+            float verticalFieldOfView = qDegreesToRadians(_verticalFieldOfView);
             float aspectRatio = 16.0f/9.0f;
-            float top = qTan(verticalVieldOfView * 0.5f);
+            float top = qTan(verticalFieldOfView * 0.5f);
             float bottom = -top;
             float right = top * aspectRatio;
             float left = -right;
@@ -390,6 +390,17 @@ void Widget::resizeGL(int w, int h)
 
 void Widget::keyPressEvent(QKeyEvent* e)
 {
+    if (e->key() == Qt::Key_0) {
+        // Reset pitch and yaw angles to default values
+        _surroundHorizontalAngleBase = 0.0f;
+        _surroundVerticalAngleBase = 0.0f;
+        _surroundHorizontalAngleCurrent = 0.0f;
+        _surroundVerticalAngleCurrent = 0.0f;
+        _verticalFieldOfView = _defaultFieldOfView;
+        LOG_DEBUG("View reset to default position");
+        update();
+        return;
+    }
     Bino::instance()->keyPressEvent(e);
 }
 
