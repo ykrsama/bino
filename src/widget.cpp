@@ -291,7 +291,7 @@ void Widget::paintGL()
             float aspectRatio = float(width) / height;
             float top = qTan(verticalVieldOfView * 0.5f);
             float bottom = -top;
-            float right = top * aspectRatio;
+            float right = 0.5 * top * aspectRatio;
             float left = -right;
             projectionMatrix.frustum(left, right, bottom, top, 1.0f, 100.0f);
             QQuaternion orientation = QQuaternion::fromEulerAngles(
