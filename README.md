@@ -1,6 +1,6 @@
-# 3D video player optimized for macOS with VR glasses
+# 3D video player optimized for VR glasses on macOS
 
-Starting with bino version 2.2, optimized for macOS with 32:9 VR glasses e.g. Rayneo Air 3, Xreal one etc.
+Starting with bino version 2.2, optimized for 32:9 VR glasses e.g. Rayneo Air 3, Xreal one etc. on macOS.
 
 - Using old OpenGL version 2.1 for compatibility with macOS 10.13 and later
 
