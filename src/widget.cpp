@@ -57,7 +57,11 @@ Widget::Widget(OutputMode outputMode, QWidget* parent) :
     setMinimumSize(8, 8);
     QSize screenSize = QGuiApplication::primaryScreen()->availableSize();
     QSize maxSize = 0.75f * screenSize;
-    _sizeHint = SizeBase.scaled(maxSize, Qt::KeepAspectRatio);
+    if (outputMode == Output_Left_Right) {
+        _sizeHint = QSize(32, 9).scaled(maxSize, Qt::KeepAspectRatio);
+    } else {
+        _sizeHint = SizeBase.scaled(maxSize, Qt::KeepAspectRatio);
+    }
     connect(Bino::instance(), &Bino::newVideoFrame, [=]() { update(); });
     connect(Bino::instance(), &Bino::toggleFullscreen, [=]() { emit toggleFullscreen(); });
     connect(Playlist::instance(), SIGNAL(mediaChanged(PlaylistEntry)), this, SLOT(mediaChanged(PlaylistEntry)));
