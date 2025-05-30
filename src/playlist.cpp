@@ -111,7 +111,7 @@ bool PlaylistEntry::optionsFromString(const QString& s)
     }
     if (parser.isSet("subtitle-track") && parser.value("subtitle-track").length() > 0) {
         int t = parser.value("subtitle-track").toInt(&ok);
-        if (ok && t >= 0)
+        if (ok) // Accept any valid integer, including negative values
             subtitleTrack = t;
         else
             ok = false;
