@@ -9,7 +9,7 @@ Starting with bino version 2.2, optimized for macOS with 32:9 VR glasses e.g. Ra
  
 - Bug fixes:
    - distorted / glitching video 
-   - wrong fov
+   - wrong fov / aspect ratio
    - playlist loading
 
 ## Build from source
