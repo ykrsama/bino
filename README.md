@@ -1,3 +1,29 @@
+# A fork of Bino optimized for macOS with 32:9 VR glasses
+
+Starting with bino version 2.2, optimized for macOS with 32:9 VR glasses e.g. Rayneo Air 3, Xreal one etc.
+
+- Using old OpenGL version 2.1 for compatibility with macOS 10.13 and later
+- bug fixes:
+   - wrong fov
+   - playlist loading
+
+## Build from source
+
+- Build Qt (homebrew qt has problems with video playback, so we need to build it from source)
+ 
+   ```bash
+   ```
+
+- Build QVR
+
+   ```bash
+   ```
+
+- Build Bino
+
+   ```bash
+   ```
+  
 # Bino: a 3D video player
 
 Bino is a video player with a focus on 3D and Virtual Reality:
