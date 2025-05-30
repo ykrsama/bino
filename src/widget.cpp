@@ -301,10 +301,10 @@ void Widget::paintGL()
         QMatrix4x4 viewMatrix;
         if (Bino::instance()->assumeSurroundMode() != Surround_Off) {
             float verticalVieldOfView = qDegreesToRadians(_verticalFieldOfView);
-            float aspectRatio = float(width) / height;
+            float aspectRatio = 16.0f/9.0f;
             float top = qTan(verticalVieldOfView * 0.5f);
             float bottom = -top;
-            float right = 0.5 * top * aspectRatio;
+            float right = top * aspectRatio;
             float left = -right;
             projectionMatrix.frustum(left, right, bottom, top, 1.0f, 100.0f);
             QQuaternion orientation = QQuaternion::fromEulerAngles(
