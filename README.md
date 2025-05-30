@@ -1,4 +1,4 @@
-# A fork of Bino optimized for macOS with VR glasses
+# 3D video player optimized for macOS with VR glasses
 
 Starting with bino version 2.2, optimized for macOS with 32:9 VR glasses e.g. Rayneo Air 3, Xreal one etc.
 
