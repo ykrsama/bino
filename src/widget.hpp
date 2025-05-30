@@ -46,6 +46,14 @@ private:
     float _surroundHorizontalAngleCurrent;
     float _surroundVerticalAngleCurrent;
 
+    // Field of view settings
+    float _verticalFieldOfView;
+    float _defaultFieldOfView;
+    float _minFieldOfView;
+    float _maxFieldOfView;
+    bool _inPinchGesture;
+    float _pinchScaleFactor;
+
     unsigned int _viewTex[2];
     int _viewTexWidth[2], _viewTexHeight[2];
     unsigned int _quadVao;
@@ -70,6 +78,7 @@ public:
     virtual void mousePressEvent(QMouseEvent* e) override;
     virtual void mouseReleaseEvent(QMouseEvent* e) override;
     virtual void mouseMoveEvent(QMouseEvent* e) override;
+    virtual bool event(QEvent* e) override;
 
 public slots:
     void mediaChanged(PlaylistEntry entry);

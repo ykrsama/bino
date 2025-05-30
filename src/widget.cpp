@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QQuaternion>
 #include <QtMath>
+#include <QGestureEvent>
 
 #include "widget.hpp"
 #include "playlist.hpp"
@@ -50,7 +51,13 @@ Widget::Widget(OutputMode outputMode, QWidget* parent) :
     _surroundHorizontalAngleBase(0.0f),
     _surroundVerticalAngleBase(0.0f),
     _surroundHorizontalAngleCurrent(0.0f),
-    _surroundVerticalAngleCurrent(0.0f)
+    _surroundVerticalAngleCurrent(0.0f),
+    _defaultFieldOfView(50.0f),
+    _minFieldOfView(20.0f),
+    _maxFieldOfView(90.0f),
+    _verticalFieldOfView(50.0f),
+    _inPinchGesture(false),
+    _pinchScaleFactor(1.0f)
 {
     setUpdateBehavior(QOpenGLWidget::PartialUpdate);
     setMouseTracking(true);
@@ -65,6 +72,8 @@ Widget::Widget(OutputMode outputMode, QWidget* parent) :
     connect(Bino::instance(), &Bino::newVideoFrame, [=]() { update(); });
     connect(Bino::instance(), &Bino::toggleFullscreen, [=]() { emit toggleFullscreen(); });
     connect(Playlist::instance(), SIGNAL(mediaChanged(PlaylistEntry)), this, SLOT(mediaChanged(PlaylistEntry)));
+    setAttribute(Qt::WA_AcceptTouchEvents);
+    grabGesture(Qt::PinchGesture);
     setFocus();
 }
 
@@ -291,7 +300,7 @@ void Widget::paintGL()
         QMatrix4x4 orientationMatrix;
         QMatrix4x4 viewMatrix;
         if (Bino::instance()->assumeSurroundMode() != Surround_Off) {
-            float verticalVieldOfView = qDegreesToRadians(50.0f);
+            float verticalVieldOfView = qDegreesToRadians(_verticalFieldOfView);
             float aspectRatio = float(width) / height;
             float top = qTan(verticalVieldOfView * 0.5f);
             float bottom = -top;
@@ -430,3 +439,44 @@ void Widget::mediaChanged(PlaylistEntry)
     _surroundHorizontalAngleCurrent = 0.0f;
     _surroundVerticalAngleCurrent = 0.0f;
 }
+
+bool Widget::event(QEvent* e)
+{
+    if (e->type() == QEvent::Gesture) {
+        QGestureEvent* gestureEvent = static_cast<QGestureEvent*>(e);
+        if (QGesture *pinch = gestureEvent->gesture(Qt::PinchGesture)) {
+            QPinchGesture* pinchGesture = static_cast<QPinchGesture*>(pinch);
+
+            if (pinchGesture->state() == Qt::GestureStarted) {
+                _inPinchGesture = true;
+                _pinchScaleFactor = 1.0f;
+            } else if (pinchGesture->state() == Qt::GestureFinished ||
+                       pinchGesture->state() == Qt::GestureCanceled) {
+                _inPinchGesture = false;
+            }
+
+            if (_inPinchGesture) {
+                // Calculate the relative scale factor from the last update
+                float currentScaleFactor = pinchGesture->totalScaleFactor();
+                float relativeScaleFactor = _pinchScaleFactor > 0 ? currentScaleFactor / _pinchScaleFactor : currentScaleFactor;
+                _pinchScaleFactor = currentScaleFactor;
+
+                // Adjust FOV based on pinch scale (inverse relationship)
+                // Pinch in (scale < 1) = zoom in (smaller FOV)
+                // Pinch out (scale > 1) = zoom out (larger FOV)
+                _verticalFieldOfView /= relativeScaleFactor;
+
+                // Clamp FOV to min/max range
+                _verticalFieldOfView = qBound(_minFieldOfView, _verticalFieldOfView, _maxFieldOfView);
+
+                LOG_DEBUG("Pinch gesture: scale=%f, FOV=%f", currentScaleFactor, _verticalFieldOfView);
+                update();
+            }
+
+            return true;
+        }
+    }
+
+    return QOpenGLWidget::event(e);
+}
+
